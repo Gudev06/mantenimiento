@@ -23,10 +23,17 @@ class TaskManager:
             json.dump(self.tasks, file, indent=4)
     
     def add_task(self, title, description):
+        if not title.strip():
+            print("Error: Title cannot be empty.")
+            return
+        if not description.strip():
+            print("Error: Description cannot be empty.")
+            return
+
         task = {
             "id": str(uuid.uuid4()),
-            "title": title,
-            "description": description,
+            "title": title.strip(),
+            "description": description.strip(),
             "status": "Pending",
             "created_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
@@ -48,14 +55,20 @@ class TaskManager:
         
         print("=" * 120 + "\n")
     
-    def mark_complete(self, task_id):
+    def find_task_by_id(self, task_id):
         for task in self.tasks:
             if task["id"] == task_id:
-                task["status"] = "Completed"
-                self.save_tasks()
-                print(f"Task '{task['title']}' marked as completed!")
-                return
-        print(f"Task with ID {task_id} not found.")
+                return task
+        return None
+    
+    def mark_complete(self, task_id):
+        task = self.find_task_by_id(task_id)
+        if task:
+            task["status"] = "Completed"
+            self.save_tasks()
+            print(f"Task '{task['title']}' marked as completed!")
+        else:
+            print(f"Task with ID {task_id} not found.")
     
     def delete_task(self, task_id):
         for i, task in enumerate(self.tasks):
@@ -78,7 +91,7 @@ def main():
         print("4. Delete Task")
         print("5. Exit")
         
-        choice = input("Enter your choice (1-5): ")
+        choice = input("Enter your choice (1-5): ").strip()
         
         if choice == "1":
             title = input("Enter task title: ")
@@ -89,11 +102,17 @@ def main():
             task_manager.list_tasks()
         
         elif choice == "3":
-            task_id = input("Enter task ID to mark as complete: ")
+            task_id = input("Enter task ID to mark as complete: ").strip()
+            if not task_id:
+                print("Error: Task ID cannot be empty.")
+                continue
             task_manager.mark_complete(task_id)
         
         elif choice == "4":
-            task_id = input("Enter task ID to delete: ")
+            task_id = input("Enter task ID to delete: ").strip()
+            if not task_id:
+                print("Error: Task ID cannot be empty.")
+                continue
             task_manager.delete_task(task_id)
         
         elif choice == "5":
@@ -101,7 +120,7 @@ def main():
             break
         
         else:
-            print("Invalid choice. Please try again.")
+            print("Invalid choice. Please enter a number from 1 to 5.")
 
 
 if __name__ == "__main__":
