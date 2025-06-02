@@ -1,5 +1,6 @@
 import os
 import json
+import uuid
 from datetime import datetime
 
 class TaskManager:
@@ -19,11 +20,11 @@ class TaskManager:
     
     def save_tasks(self):
         with open(self.file_name, "w") as file:
-            json.dump(self.tasks, file)
+            json.dump(self.tasks, file, indent=4)
     
     def add_task(self, title, description):
         task = {
-            "id": len(self.tasks) + 1,
+            "id": str(uuid.uuid4()),
             "title": title,
             "description": description,
             "status": "Pending",
@@ -38,14 +39,14 @@ class TaskManager:
             print("No tasks found.")
             return
         
-        print("\n" + "=" * 80)
-        print(f"{'ID':<5} {'TITLE':<20} {'STATUS':<10} {'CREATED DATE':<20} {'DESCRIPTION':<30}")
-        print("-" * 80)
+        print("\n" + "=" * 120)
+        print(f"{'ID':<36} {'TITLE':<20} {'STATUS':<10} {'CREATED DATE':<20} {'DESCRIPTION':<30}")
+        print("-" * 120)
         
         for task in self.tasks:
-            print(f"{task['id']:<5} {task['title'][:18]:<20} {task['status']:<10} {task['created_date']:<20} {task['description'][:28]:<30}")
+            print(f"{task['id']:<36} {task['title'][:18]:<20} {task['status']:<10} {task['created_date']:<20} {task['description'][:28]:<30}")
         
-        print("=" * 80 + "\n")
+        print("=" * 120 + "\n")
     
     def mark_complete(self, task_id):
         for task in self.tasks:
@@ -88,11 +89,11 @@ def main():
             task_manager.list_tasks()
         
         elif choice == "3":
-            task_id = int(input("Enter task ID to mark as complete: "))
+            task_id = input("Enter task ID to mark as complete: ")
             task_manager.mark_complete(task_id)
         
         elif choice == "4":
-            task_id = int(input("Enter task ID to delete: "))
+            task_id = input("Enter task ID to delete: ")
             task_manager.delete_task(task_id)
         
         elif choice == "5":
